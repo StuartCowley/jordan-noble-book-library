@@ -1,4 +1,10 @@
 {
+  "env": {
+    "node": true,
+    "mocha": true,
+    "commonjs": true,
+    "es2021": true
+  },
   "extends": ["airbnb", "prettier", "plugin:node/recommended"],
   "plugins": ["prettier"],
   "rules": {
