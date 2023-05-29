@@ -9,4 +9,6 @@ router.get('/', bookController.findAll);
 
 router.get('/:id', bookController.findById);
 
+router.put('/:id', bookController.replace);
+
 module.exports = router;
