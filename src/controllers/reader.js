@@ -1,6 +1,6 @@
 const { Reader } = require('../models');
 
-exports.createReader = async (req, res) => {
+exports.create = async (req, res) => {
   const newReader = await Reader.create(req.body);
   try {
     res.status(201).json(newReader);
@@ -9,7 +9,7 @@ exports.createReader = async (req, res) => {
   }
 };
 
-exports.findAllReaders = async (__, res) => {
+exports.findAll = async (__, res) => {
   const readers = await Reader.findAll();
   try {
     res.status(200).json(readers);
@@ -18,15 +18,15 @@ exports.findAllReaders = async (__, res) => {
   }
 };
 
-exports.findReaderById = async (req, res) => {
+exports.findById = async (req, res) => {
   const reader = await Reader.findByPk(req.params.id);
   try {
     if (!reader) {
-      throw new Error();
+      res.status(404).json({ error: 'The reader could not be found.' });
     }
     res.status(200).json(reader);
   } catch (err) {
-    res.status(404).json({ error: 'The reader could not be found.' });
+    res.status(500).json(err.message);
   }
 };
 
@@ -49,7 +49,7 @@ exports.updateEmail = async (req, res) => {
   }
 };
 
-exports.deleteReader = async (req, res) => {
+exports.delete = async (req, res) => {
   const deleted = await Reader.destroy({ where: { id: req.params.id } });
   try {
     if (!deleted) {

@@ -5,7 +5,7 @@ const app = require('../src/app');
 
 describe('/readers', () => {
   before(async () => {
-    await Reader.sequelize.sync();
+    await Reader.sequelize.sync({ force: true });
   });
 
   beforeEach(async () => {
@@ -18,6 +18,7 @@ describe('/readers', () => {
         const response = await request(app).post('/readers').send({
           name: 'Darrow',
           email: 'redrising@gmail.com',
+          password: 'howler123',
         });
         const newReaderRecord = await Reader.findByPk(response.body.id, {
           raw: true,
@@ -27,6 +28,7 @@ describe('/readers', () => {
         expect(response.body.name).to.equal('Darrow');
         expect(newReaderRecord.name).to.equal('Darrow');
         expect(newReaderRecord.email).to.equal('redrising@gmail.com');
+        expect(newReaderRecord.password).to.equal('howler123');
       });
     });
   });
@@ -39,11 +41,13 @@ describe('/readers', () => {
         Reader.create({
           name: 'Darrow',
           email: 'redrising@gmail.com',
+          password: 'howler123',
         }),
         Reader.create({ name: 'Arya Stark', email: 'vmorgul@me.com' }),
         Reader.create({
           name: 'Rubeus Hagrid',
           email: 'grounds@hogwarts.co.uk',
+          password: 'fluffy',
         }),
       ]);
     });
@@ -60,6 +64,7 @@ describe('/readers', () => {
 
           expect(reader.name).to.equal(expected.name);
           expect(reader.email).to.equal(expected.email);
+          expect(reader.password).to.equal(expected.password);
         });
       });
     });
@@ -72,6 +77,7 @@ describe('/readers', () => {
         expect(response.status).to.equal(200);
         expect(response.body.name).to.equal(reader.name);
         expect(response.body.email).to.equal(reader.email);
+        expect(response.body.password).to.equal(reader.password);
       });
 
       it('returns a 404 if the reader does not exist', async () => {

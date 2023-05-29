@@ -1,22 +1,16 @@
 const express = require('express');
-const {
-  createReader,
-  findAllReaders,
-  findReaderById,
-  updateEmail,
-  deleteReader,
-} = require('../controllers/reader');
+const readerController = require('../controllers/reader');
 
 const router = express.Router();
 
-router.route('/readers').post(createReader);
+router.post('/', readerController.create);
 
-router.route('/readers').get(findAllReaders);
+router.get('/', readerController.findAll);
 
-router.route('/readers/:id').get(findReaderById);
+router.get('/:id', readerController.findById);
 
-router.route('/readers/:id').patch(updateEmail);
+router.patch('/:id', readerController.updateEmail);
 
-router.route('/readers/:id').delete(deleteReader);
+router.delete('/:id', readerController.delete);
 
 module.exports = router;
