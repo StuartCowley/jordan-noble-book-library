@@ -97,7 +97,6 @@ describe('/books', () => {
         const updatedBookRecord = await Book.findByPk(book.id, {
           raw: true,
         });
-
         expect(response.status).to.equal(200);
         expect(updatedBookRecord.title).to.equal('new title');
         expect(updatedBookRecord.author).to.equal('new author');
@@ -112,6 +111,47 @@ describe('/books', () => {
           genre: 'new genre',
           ISBN: 'new isbn',
         });
+        expect(response.status).to.equal(404);
+        expect(response.body.error).to.equal('The book could not be found.');
+      });
+    });
+    describe('PATCH /books/:id', () => {
+      it('updates the book and returns the updated record', async () => {
+        const book = books[0];
+        const response = await request(app).patch(`/books/${book.id}`).send({
+          title: 'new title',
+        });
+        const updatedBookRecord = await Book.findByPk(book.id, {
+          raw: true,
+        });
+
+        expect(response.status).to.equal(200);
+        expect(updatedBookRecord.title).to.equal('new title');
+      });
+
+      it('returns a 404 if the book does not exist', async () => {
+        const response = await request(app).patch(`/books/12345`).send({
+          title: 'new title',
+          author: 'new author',
+          genre: 'new genre',
+          ISBN: 'new isbn',
+        });
+        expect(response.status).to.equal(404);
+        expect(response.body.error).to.equal('The book could not be found.');
+      });
+    });
+    describe('DELETE /books/:id', () => {
+      it('deletes book record by id', async () => {
+        const book = books[0];
+        const response = await request(app).delete(`/books/${book.id}`);
+        const deletedBook = await Book.findByPk(book.id, { raw: true });
+
+        expect(response.status).to.equal(204);
+        expect(deletedBook).to.equal(null);
+      });
+
+      it('returns a 404 if the book does not exist', async () => {
+        const response = await request(app).delete('/books/12345');
         expect(response.status).to.equal(404);
         expect(response.body.error).to.equal('The book could not be found.');
       });
