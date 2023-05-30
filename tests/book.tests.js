@@ -113,7 +113,7 @@ describe('/books', () => {
           raw: true,
         });
         expect(response.status).to.equal(200);
-        expect(Object.keys(response.body).length).to.equal(7);
+        expect(Object.keys(response.body).length).to.equal(4);
         expect(response.body.title).to.equal('new title');
         expect(updatedBookRecord.title).to.equal('new title');
       });
