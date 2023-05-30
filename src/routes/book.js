@@ -9,8 +9,6 @@ router.get('/', bookController.findAll);
 
 router.get('/:id', bookController.findById);
 
-router.put('/:id', bookController.replace);
-
 router.patch('/:id', bookController.update);
 
 router.delete('/:id', bookController.delete);

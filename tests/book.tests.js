@@ -100,37 +100,7 @@ describe('/books', () => {
         const response = await request(app).get('/books/12345');
 
         expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal('The book could not be found.');
-      });
-    });
-    describe('PUT /books/:id', () => {
-      it('replaces the book and returns the updated record', async () => {
-        const book = books[0];
-        const response = await request(app).put(`/books/${book.id}`).send({
-          title: 'new title',
-          author: 'new author',
-          genre: 'new genre',
-          ISBN: 'new isbn',
-        });
-        const updatedBookRecord = await Book.findByPk(book.id, {
-          raw: true,
-        });
-        expect(response.status).to.equal(200);
-        expect(updatedBookRecord.title).to.equal('new title');
-        expect(updatedBookRecord.author).to.equal('new author');
-        expect(updatedBookRecord.genre).to.equal('new genre');
-        expect(updatedBookRecord.ISBN).to.equal('new isbn');
-      });
-
-      it('returns a 404 if the book does not exist', async () => {
-        const response = await request(app).put(`/books/12345`).send({
-          title: 'new title',
-          author: 'new author',
-          genre: 'new genre',
-          ISBN: 'new isbn',
-        });
-        expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal('The book could not be found.');
+        expect(response.body.error).to.equal('The item could not be found.');
       });
     });
     describe('PATCH /books/:id', () => {
@@ -142,8 +112,9 @@ describe('/books', () => {
         const updatedBookRecord = await Book.findByPk(book.id, {
           raw: true,
         });
-
         expect(response.status).to.equal(200);
+        expect(Object.keys(response.body).length).to.equal(7);
+        expect(response.body.title).to.equal('new title');
         expect(updatedBookRecord.title).to.equal('new title');
       });
 
@@ -155,7 +126,7 @@ describe('/books', () => {
           ISBN: 'new isbn',
         });
         expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal('The book could not be found.');
+        expect(response.body.error).to.equal('The item could not be found.');
       });
     });
     describe('DELETE /books/:id', () => {
@@ -171,7 +142,7 @@ describe('/books', () => {
       it('returns a 404 if the book does not exist', async () => {
         const response = await request(app).delete('/books/12345');
         expect(response.status).to.equal(404);
-        expect(response.body.error).to.equal('The book could not be found.');
+        expect(response.body.error).to.equal('The item could not be found.');
       });
     });
   });

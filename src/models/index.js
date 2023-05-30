@@ -21,4 +21,3 @@ const setUpDatabase = () => {
 };
 
 module.exports = setUpDatabase();
-

@@ -9,7 +9,7 @@ router.get('/', readerController.findAll);
 
 router.get('/:id', readerController.findById);
 
-router.patch('/:id', readerController.updateEmail);
+router.patch('/:id', readerController.update);
 
 router.delete('/:id', readerController.delete);
 
