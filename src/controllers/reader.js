@@ -1,17 +1,17 @@
 const { Reader } = require('../models');
 
 exports.create = async (req, res) => {
-  const newReader = await Reader.create(req.body);
   try {
+    const newReader = await Reader.create(req.body);
     res.status(201).json(newReader);
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(400).json({ error: err.errors[0].message });
   }
 };
 
 exports.findAll = async (__, res) => {
-  const readers = await Reader.findAll();
   try {
+    const readers = await Reader.findAll();
     res.status(200).json(readers);
   } catch (err) {
     res.status(500).json(err.message);
@@ -19,8 +19,8 @@ exports.findAll = async (__, res) => {
 };
 
 exports.findById = async (req, res) => {
-  const reader = await Reader.findByPk(req.params.id);
   try {
+    const reader = await Reader.findByPk(req.params.id);
     if (!reader) {
       res.status(404).json({ error: 'The reader could not be found.' });
     }
@@ -31,15 +31,15 @@ exports.findById = async (req, res) => {
 };
 
 exports.updateEmail = async (req, res) => {
-  const reader = await Reader.findByPk(req.params.id);
   const { email } = req.body;
   const updateData = {
     email: email,
   };
-  const [updatedRow] = await Reader.update(updateData, {
-    where: { id: req.params.id },
-  });
   try {
+    const reader = await Reader.findByPk(req.params.id);
+    const [updatedRow] = await Reader.update(updateData, {
+      where: { id: req.params.id },
+    });
     if (!reader) {
       res.status(404).json({ error: 'The reader could not be found.' });
     }

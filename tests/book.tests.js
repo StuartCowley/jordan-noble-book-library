@@ -30,6 +30,24 @@ describe('/books', () => {
         expect(newBookRecord.genre).to.equal('Science Fiction');
         expect(newBookRecord.ISBN).to.equal('9780307887436');
       });
+      it('throws an error if no title provided', async () => {
+        const response = await request(app).post('/books').send({
+          author: 'Ernest Cline',
+          genre: 'Science Fiction',
+          ISBN: '9780307887436',
+        });
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal('No title provided.');
+      });
+      it('throws an error if no author provided', async () => {
+        const response = await request(app).post('/books').send({
+          title: 'Ready Player One',
+          genre: 'Science Fiction',
+          ISBN: '9780307887436',
+        });
+        expect(response.status).to.equal(400);
+        expect(response.body.error).to.equal('No author provided.');
+      });
     });
   });
   describe('with records in the database', () => {

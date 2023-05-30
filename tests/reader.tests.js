@@ -31,6 +31,34 @@ describe('/readers', () => {
         expect(newReaderRecord.password).to.equal('howler123');
       });
     });
+    it('throws an error if username is null', async () => {
+      const response = await request(app).post('/readers').send({
+        email: 'Slytherin@hogwarts.co.uk',
+        password: 'Potter12345',
+      });
+      expect(response.status).to.equal(400);
+      expect(response.body.error).to.equal('No username provided.');
+    });
+    it('throws an error if email address is invalid', async () => {
+      const response = await request(app).post('/readers').send({
+        name: 'Malfoy',
+        email: 'Slytherin',
+        password: 'Potter12345',
+      });
+      expect(response.status).to.equal(400);
+      expect(response.body.error).to.equal('Invalid email provided.');
+    });
+    it('throws an error if password < 8 characters', async () => {
+      const response = await request(app).post('/readers').send({
+        name: 'Malfoy',
+        email: 'Slytherin@hogwarts.co.uk',
+        password: 'Potter',
+      });
+      expect(response.status).to.equal(400);
+      expect(response.body.error).to.equal(
+        'Password should be between 8 and 99 characters'
+      );
+    });
   });
 
   describe('with records in the database', () => {
@@ -43,11 +71,15 @@ describe('/readers', () => {
           email: 'redrising@gmail.com',
           password: 'howler123',
         }),
-        Reader.create({ name: 'Arya Stark', email: 'vmorgul@me.com' }),
+        Reader.create({
+          name: 'Arya Stark',
+          email: 'vmorgul@me.com',
+          password: 'thenorthremembers',
+        }),
         Reader.create({
           name: 'Rubeus Hagrid',
           email: 'grounds@hogwarts.co.uk',
-          password: 'fluffy',
+          password: 'fluffy123',
         }),
       ]);
     });
@@ -70,7 +102,7 @@ describe('/readers', () => {
     });
 
     describe('GET /readers/:id', () => {
-      it('gets readers record by id', async () => {
+      it('gets reader record by id', async () => {
         const reader = readers[0];
         const response = await request(app).get(`/readers/${reader.id}`);
 

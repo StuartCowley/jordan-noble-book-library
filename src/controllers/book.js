@@ -1,17 +1,17 @@
 const { Book } = require('../models/index');
 
 exports.create = async (req, res) => {
-  const book = await Book.create(req.body);
   try {
+    const book = await Book.create(req.body);
     res.status(201).json(book);
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(400).json({ error: err.errors[0].message });
   }
 };
 
 exports.findAll = async (__, res) => {
-  const books = await Book.findAll();
   try {
+    const books = await Book.findAll();
     res.status(200).json(books);
   } catch (err) {
     res.status(500).json(err.message);
@@ -19,8 +19,8 @@ exports.findAll = async (__, res) => {
 };
 
 exports.findById = async (req, res) => {
-  const book = await Book.findByPk(req.params.id);
   try {
+    const book = await Book.findByPk(req.params.id);
     if (!book) {
       res.status(404).json({ error: 'The book could not be found.' });
     }
@@ -31,8 +31,8 @@ exports.findById = async (req, res) => {
 };
 
 exports.replace = async (req, res) => {
-  const book = await Book.findByPk(req.params.id);
   try {
+    const book = await Book.findByPk(req.params.id);
     if (!book) {
       res.status(404).json({ error: 'The book could not be found.' });
     }
@@ -49,10 +49,10 @@ exports.replace = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-  const book = await Book.findByPk(req.params.id);
   const { title, author, genre, ISBN } = req.body;
 
   try {
+    const book = await Book.findByPk(req.params.id);
     if (!book) {
       res.status(404).json({ error: 'The book could not be found.' });
     } else if (title) {
@@ -82,8 +82,8 @@ exports.update = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  const deleted = await Book.destroy({ where: { id: req.params.id } });
   try {
+    const deleted = await Book.destroy({ where: { id: req.params.id } });
     if (!deleted) {
       res.status(404).json({ error: 'The book could not be found.' });
     }
