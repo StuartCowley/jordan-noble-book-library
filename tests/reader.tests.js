@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Reader } = require('../src/models');
+const { Reader } = require('../src/models/index');
 const app = require('../src/app');
 
 describe('/readers', () => {
