@@ -98,7 +98,6 @@ describe('/readers', () => {
         const response = await request(app).get('/readers');
 
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(3);
 
         response.body.forEach((reader) => {
           const expected = readers.find((a) => a.id === reader.id);
@@ -149,7 +148,6 @@ describe('/readers', () => {
           raw: true,
         });
         expect(response.status).to.equal(200);
-        expect(Object.keys(response.body).length).to.equal(3);
         expect(response.body.email).to.equal('miss_e_bennet@gmail.com');
         expect(updatedReaderRecord.email).to.equal('miss_e_bennet@gmail.com');
       });

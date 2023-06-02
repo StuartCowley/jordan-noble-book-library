@@ -19,6 +19,9 @@ module.exports = (connection, DataTypes) => {
       },
     },
     password: {
+      defaultScope: {
+        attributes: { exclude: ['password'] },
+      },
       type: DataTypes.STRING,
       allowNull: false,
       validate: {

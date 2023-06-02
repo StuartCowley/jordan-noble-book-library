@@ -36,7 +36,6 @@ describe('/genres', () => {
 
   describe('with records in the database', () => {
     let genres;
-    let books;
     beforeEach(async () => {
       genres = await Promise.all([
         Genre.create({
@@ -46,7 +45,7 @@ describe('/genres', () => {
           genre: 'Fantasy',
         }),
       ]);
-      books = await Promise.all([
+      await Promise.all([
         Book.create({
           title: 'Frankenstein',
           ISBN: '435634563456',
