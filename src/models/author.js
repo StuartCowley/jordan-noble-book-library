@@ -8,6 +8,10 @@ module.exports = (connection, DataTypes) => {
         notNull: {
           msg: 'No author provided.',
         },
+        notEmpty: {
+          args: [true],
+          msg: 'The author cannot be empty',
+        },
       },
     },
   };

@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Genre } = require('../src/models/index');
+const { Genre, Book } = require('../src/models/index');
 const app = require('../src/app');
 
 describe('/genres', () => {
@@ -36,7 +36,7 @@ describe('/genres', () => {
 
   describe('with records in the database', () => {
     let genres;
-
+    let books;
     beforeEach(async () => {
       genres = await Promise.all([
         Genre.create({
@@ -45,33 +45,43 @@ describe('/genres', () => {
         Genre.create({
           genre: 'Fantasy',
         }),
-        Genre.create({
-          genre: 'Children',
+      ]);
+      books = await Promise.all([
+        Book.create({
+          title: 'Frankenstein',
+          ISBN: '435634563456',
+          GenreId: genres[0].id,
+        }),
+        Book.create({
+          title: 'The Lord of the Rings',
+          ISBN: '23045823459349',
+          GenreId: genres[1].id,
         }),
       ]);
     });
 
     describe('GET /genres', () => {
-      it('gets all genres records', async () => {
+      it('gets all genres records and associated books', async () => {
         const response = await request(app).get('/genres');
 
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(3);
+        expect(response.body.length).to.equal(2);
+        expect(response.body[0].Books[0].title).to.equal('Frankenstein');
 
         response.body.forEach((genre) => {
           const expected = genres.find((a) => a.id === genre.id);
-
           expect(genre.genre).to.equal(expected.genre);
         });
       });
     });
     describe('GET /genres/:id', () => {
-      it('gets genre record by id', async () => {
+      it('gets genre record by id and associated books', async () => {
         const genre = genres[0];
         const response = await request(app).get(`/genres/${genre.id}`);
 
         expect(response.status).to.equal(200);
         expect(response.body.genre).to.equal(genre.genre);
+        expect(response.body.Books[0].title).to.equal('Frankenstein');
       });
       it('returns a 404 if the genre does not exist', async () => {
         const response = await request(app).get('/genres/12345');

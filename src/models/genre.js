@@ -8,6 +8,10 @@ module.exports = (connection, DataTypes) => {
         notNull: {
           msg: 'No genre provided.',
         },
+        notEmpty: {
+          args: [true],
+          msg: 'The genre cannot be empty',
+        },
       },
     },
   };

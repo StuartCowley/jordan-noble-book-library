@@ -1,3 +1,5 @@
+const { Book, Genre, Author, Reader } = require('../models/index');
+
 exports.createItem = async (req, res, Model) => {
   try {
     let item = await Model.create(req.body);
@@ -15,8 +17,15 @@ exports.createItem = async (req, res, Model) => {
 };
 
 exports.findAll = async (__, res, Model) => {
+  let items;
+  let params;
+  if (Model === Book) params = { include: [Reader, Genre, Author] };
+  else if (Model === Genre) params = { include: Book };
+  else if (Model === Author) params = { include: Book };
+  else if (Model === Reader) params = { include: Book };
+
   try {
-    const items = await Model.findAll();
+    items = await Model.findAll(params);
     if (items[0].password) {
       for (let n = 0; n < items.length; n += 1) {
         items[n] = {
@@ -33,8 +42,15 @@ exports.findAll = async (__, res, Model) => {
 };
 
 exports.findById = async (req, res, Model) => {
+  let item;
+  let params;
+  if (Model === Book) params = { include: [Reader, Genre, Author] };
+  else if (Model === Genre) params = { include: Book };
+  else if (Model === Author) params = { include: Book };
+  else if (Model === Reader) params = { include: Book };
+
   try {
-    let item = await Model.findByPk(req.params.id);
+    item = await Model.findByPk(req.params.id, params);
     if (!item) {
       res.status(404).json({ error: `The item could not be found.` });
     } else if (item.password) {
@@ -65,12 +81,7 @@ exports.update = async (req, res, Model, updateData) => {
         email: item.email,
       };
     } else {
-      item = {
-        title: item.title,
-        author: item.author,
-        genre: item.genre,
-        ISBN: item.ISBN,
-      };
+      item = await Model.findByPk(req.params.id);
     }
     res.status(200).json(item);
   } catch (err) {

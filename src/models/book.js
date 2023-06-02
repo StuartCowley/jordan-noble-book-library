@@ -9,16 +9,6 @@ module.exports = (connection, DataTypes) => {
         },
       },
     },
-    author: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'No author provided.',
-        },
-      },
-    },
-    genre: { type: DataTypes.STRING },
     ISBN: { type: DataTypes.STRING },
   };
   const BookModel = connection.define('Book', schema);
