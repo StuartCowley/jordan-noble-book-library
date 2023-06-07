@@ -19,9 +19,6 @@ module.exports = (connection, DataTypes) => {
       },
     },
     password: {
-      defaultScope: {
-        attributes: { exclude: ['password'] },
-      },
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -32,6 +29,11 @@ module.exports = (connection, DataTypes) => {
       },
     },
   };
-  const ReaderModel = connection.define('Reader', schema);
+  const options = {
+    defaultScope: {
+      attributes: { exclude: ['password'] },
+    },
+  };
+  const ReaderModel = connection.define('Reader', schema, options);
   return ReaderModel;
 };

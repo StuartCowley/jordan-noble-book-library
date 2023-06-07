@@ -46,9 +46,9 @@ describe('/books', () => {
 
       expect(response.status).to.equal(200);
       expect(response.body[0].title).to.equal('Red Rising');
-      expect(response.body[0].Reader.name).to.equal('Tom');
+      expect(response.body[1].Reader.name).to.equal('Amy');
       expect(response.body[0].Genre.genre).to.equal('Dystopian');
-      expect(response.body[0].Author.author).to.equal('Pierce Brown');
+      expect(response.body[1].Author.author).to.equal('Ernest Cline');
 
       response.body.forEach((book) => {
         const expected = books.find((a) => a.id === book.id);

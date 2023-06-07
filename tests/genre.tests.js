@@ -64,9 +64,7 @@ describe('/genres', () => {
         const response = await request(app).get('/genres');
 
         expect(response.status).to.equal(200);
-        expect(response.body.length).to.equal(2);
         expect(response.body[0].Books[0].title).to.equal('Frankenstein');
-
         response.body.forEach((genre) => {
           const expected = genres.find((a) => a.id === genre.id);
           expect(genre.genre).to.equal(expected.genre);

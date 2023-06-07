@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Author } = require('../src/models/index');
+const { Author, Book } = require('../src/models/index');
 const app = require('../src/app');
 
 describe('/authors', () => {
@@ -49,14 +49,27 @@ describe('/authors', () => {
           author: 'George Orwell',
         }),
       ]);
+      await Promise.all([
+        Book.create({
+          title: 'Frankenstein',
+          ISBN: '435634563456',
+          AuthorId: authors[0].id,
+        }),
+        Book.create({
+          title: 'The Lord of the Rings',
+          ISBN: '23045823459349',
+          AuthorId: authors[1].id,
+        }),
+      ]);
     });
 
     describe('GET /authors', () => {
-      it('gets all authors records', async () => {
+      it('gets all authors records and associated books', async () => {
         const response = await request(app).get('/authors');
 
         expect(response.status).to.equal(200);
         expect(response.body.length).to.equal(3);
+        expect(response.body[0].Books[0].title).to.equal('Frankenstein');
 
         response.body.forEach((author) => {
           const expected = authors.find((a) => a.id === author.id);
@@ -66,12 +79,13 @@ describe('/authors', () => {
       });
     });
     describe('GET /authors/:id', () => {
-      it('gets author record by id', async () => {
+      it('gets author record by id and associated books', async () => {
         const author = authors[0];
         const response = await request(app).get(`/authors/${author.id}`);
 
         expect(response.status).to.equal(200);
         expect(response.body.author).to.equal(author.author);
+        expect(response.body.Books[0].title).to.equal('Frankenstein');
       });
       it('returns a 404 if the author does not exist', async () => {
         const response = await request(app).get('/authors/12345');

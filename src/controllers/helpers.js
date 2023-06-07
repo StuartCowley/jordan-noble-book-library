@@ -4,6 +4,7 @@ exports.createItem = async (req, res, Model) => {
   try {
     const item = await Model.create(req.body);
     delete item.dataValues.password;
+
     res.status(201).json(item);
   } catch (err) {
     res.status(400).json({ error: err.errors[0].message });
@@ -14,17 +15,11 @@ exports.findAll = async (__, res, Model) => {
   let items;
   let params;
   if (Model === Book) params = { include: [Reader, Genre, Author] };
-  else if (Model === Genre) params = { include: Book };
-  else if (Model === Author) params = { include: Book };
-  else if (Model === Reader) params = { include: Book };
+  else if (Model === Genre || Model === Author || Model === Reader) 
+  params = { include: Book };
 
   try {
     items = await Model.findAll(params);
-    if (items[0].password) {
-      for (let n = 0; n < items.length; n += 1) {
-        delete items[n].dataValues.password;
-      }
-    }
     res.status(200).json(items);
   } catch (err) {
     res.status(500).json(err.message);
@@ -35,16 +30,14 @@ exports.findById = async (req, res, Model) => {
   let item;
   let params;
   if (Model === Book) params = { include: [Reader, Genre, Author] };
-  else if (Model === Genre) params = { include: Book };
-  else if (Model === Author) params = { include: Book };
-  else if (Model === Reader) params = { include: Book };
+  else if (Model === Genre || Model === Author || Model === Reader) 
+  params = { include: Book };
 
   try {
     item = await Model.findByPk(req.params.id, params);
     if (!item) {
       res.status(404).json({ error: `The item could not be found.` });
     }
-    delete item.dataValues.password;
     res.status(200).json(item);
   } catch (err) {
     res.status(500).json(err.message);
@@ -60,7 +53,6 @@ exports.update = async (req, res, Model, updateData) => {
     if (!item) {
       res.status(404).json({ error: 'The item could not be found.' });
     }
-    delete item.dataValues.password;
     res.status(200).json(item);
   } catch (err) {
     res.status(500).json(err.message);

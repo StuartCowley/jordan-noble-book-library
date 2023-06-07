@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const { Reader } = require('../src/models/index');
+const { Reader, Book } = require('../src/models/index');
 const app = require('../src/app');
 
 describe('/readers', () => {
@@ -28,7 +28,6 @@ describe('/readers', () => {
         expect(response.body.name).to.equal('Darrow');
         expect(newReaderRecord.name).to.equal('Darrow');
         expect(newReaderRecord.email).to.equal('redrising@gmail.com');
-        expect(newReaderRecord.password).to.equal('howler123');
       });
     });
     it('throws an error if username is null', async () => {
@@ -74,34 +73,48 @@ describe('/readers', () => {
     let readers;
 
     beforeEach(async () => {
-      readers = await Promise.all([
-        Reader.create({
-          name: 'Darrow',
-          email: 'redrising@gmail.com',
-          password: 'howler123',
-        }),
-        Reader.create({
-          name: 'Arya Stark',
-          email: 'vmorgul@me.com',
-          password: 'thenorthremembers',
-        }),
-        Reader.create({
-          name: 'Rubeus Hagrid',
-          email: 'grounds@hogwarts.co.uk',
-          password: 'fluffy123',
-        }),
+      await Promise.all([
+        (readers = await Promise.all([
+          Reader.create({
+            name: 'Darrow',
+            email: 'redrising@gmail.com',
+            password: 'howler123',
+          }),
+          Reader.create({
+            name: 'Arya Stark',
+            email: 'vmorgul@me.com',
+            password: 'thenorthremembers',
+          }),
+          Reader.create({
+            name: 'Rubeus Hagrid',
+            email: 'grounds@hogwarts.co.uk',
+            password: 'fluffy123',
+          }),
+        ])),
+        await Promise.all([
+          Book.create({
+            title: 'Frankenstein',
+            ISBN: '435634563456',
+            ReaderId: readers[0].id,
+          }),
+          Book.create({
+            title: 'The Lord of the Rings',
+            ISBN: '23045823459349',
+            ReaderId: readers[1].id,
+          }),
+        ]),
       ]);
     });
 
     describe('GET /readers', () => {
-      it('gets all readers records', async () => {
+      it('gets all readers records and associated books', async () => {
         const response = await request(app).get('/readers');
 
         expect(response.status).to.equal(200);
+        expect(response.body[0].Books[0].title).to.equal('Frankenstein');
 
         response.body.forEach((reader) => {
           const expected = readers.find((a) => a.id === reader.id);
-
           expect(reader.name).to.equal(expected.name);
           expect(reader.email).to.equal(expected.email);
           expect(!reader.password);
@@ -117,13 +130,14 @@ describe('/readers', () => {
       });
     });
     describe('GET /readers/:id', () => {
-      it('gets reader record by id', async () => {
+      it('gets reader record by id and associated books', async () => {
         const reader = readers[0];
         const response = await request(app).get(`/readers/${reader.id}`);
 
         expect(response.status).to.equal(200);
         expect(response.body.name).to.equal(reader.name);
         expect(response.body.email).to.equal(reader.email);
+        expect(response.body.Books[0].title).to.equal('Frankenstein');
       });
       it('does not return password', async () => {
         const reader = readers[0];
